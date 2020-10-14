@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Api XMLHTTPRequest</title>
+</head>
+<body onload="listar()">
+    
+    <form id="form">
+        <input type="text" id="categoria" required>
+
+        <button type="button" onclick="cadastrar()" id="btnCadastrar">Cadastrar</button>
+        <button type="button" id="btnRemover">Remover</button>
+
+        <table>
+            <caption>Frutas</caption>
+            <thead>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Nome
+                </th>
+            </thead>
+            <tbody id="tabela-lista-corpo"></tbody>
+        </table>
+    </form>
+
+</body>
+<script>
+    let url = 'https://5f8719a549ccbb0016176f7c.mockapi.io/api/Categotias';
+    let Categoria = document.getElementById('categoria');
+    let categorias = [];
+    function listar (){
+        let xhrGet = new XMLHttpRequest();
+        xhrGet.onload = ListarSucesso;
+        xhrGet.onerror = ListarErro;
+        xhrGet.open('GET', url);
+        xhrGet.send();
+    }
+    function ListarSucesso(){
+        console.log("Sucesso");
+        const data = this.responseText;
+        console.log(JSON.parse(data))
+        console.log(categorias); 
+    }
+    function ListarErro(err){
+        console.error(err);
+    }
+
+    function cadastrar(){
+        event.preventDefault();
+        let xhrPost = new XMLHttpRequest();
+        xhrPost.onload = cadastroSucesso;
+        xhrPost.onerror = cadastroError;
+        xhrPost.open('POST', url);
+        xhrPost.setRequestHeader('content-type', 'application/json');
+        let params = {
+            name : categoria.value
+        }
+        xhrPost.send(JSON.stringify(params))
+    }
+    function cadastroSucesso(){
+        console.log('SUcesso');
+        console.log(this.status);
+        console.log(JSON.parse(this.responseText));
+    }
+    function cadastroError(err){
+        console.error(err);
+    }
+
+    function remover(){
+        event.preventDefault();
+
+        const params = {
+            name : categoria.value
+        }
+
+        let xhrDelete = new XMLHttpRequest();
+        xhrDelete.onload = removeSucesso;
+        xhrDelete.onerror = removeErro;
+        xhrDelete.open('DELETE', url + '/' + categoria.value);
+        xhrDelete.send();
+    }
+
+    function removeSucesso(){
+        
+            alert('Categoria removida');
+
+            listar();
+    }
+
+    function removeErro(err){
+        console.log('Erro no remoçao: ' + err);
+    }
+    
+
+</script>
+</html>
